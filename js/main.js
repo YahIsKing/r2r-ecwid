@@ -1,31 +1,20 @@
+// Enable development logs first
+localStorage.setItem("show_ec_logs", "ALL");
+
+// Basic test to see if our code is running
+console.log('Main.js loaded - testing Ecwid integration');
+
 Ecwid.OnAPILoaded.add(function() {
-    console.log('API loaded');
+    console.log('Ecwid API loaded - test message');
     
     Ecwid.OnPageLoaded.add(function(page) {
-        console.log('Page loaded:', page.type);
+        console.log('Ecwid page loaded:', page.type);
         
-        // Create red banner
-        const banner = document.createElement('div');
-        banner.style.cssText = 'background-color: red; height: 20px; width: 100%; position: fixed; top: 0; left: 0; z-index: 9999999;';
-        
-        // For product pages, try to insert into the Ecwid container
-        if (page.type === "PRODUCT") {
-            const ecwidContainer = document.querySelector('#ecwid-products');
-            if (ecwidContainer) {
-                ecwidContainer.insertBefore(banner, ecwidContainer.firstChild);
-            } else {
-                document.body.insertBefore(banner, document.body.firstChild);
-            }
-            
-            console.log(
-                `
-                Product page loaded!
-                Ecwid store ID is: ${Ecwid.getOwnerId()}
-                Product ID is: ${page.productId}
-                `
-            );
-        } else {
-            document.body.insertBefore(banner, document.body.firstChild);
+        if (page.type == "PRODUCT") {
+            console.log('Product page detected:', {
+                storeId: Ecwid.getOwnerId(),
+                productId: page.productId
+            });
         }
     });
 });
