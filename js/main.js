@@ -1,22 +1,42 @@
-// Enable all development logs
-localStorage.setItem("show_ec_logs", "ALL");
-
 console.log('Testing - main.js file loaded');
 
-Ecwid.OnAPILoaded.add(function() {
-    console.log('API loaded');
+// Function to wait for Ecwid to be fully loaded
+function waitForEcwid() {
+    if (typeof Ecwid === 'undefined') {
+        console.log('Waiting for Ecwid...');
+        setTimeout(waitForEcwid, 500);
+        return;
+    }
+
+    console.log('Ecwid found, initializing...');
     
-    Ecwid.OnPageLoaded.add(function(page) {
-        console.log('Page loaded:', page.type);
+    // Enable development logs
+    try {
+        localStorage.setItem('show_ec_logs', 'ALL');
+        console.log('Development logs enabled');
+    } catch (e) {
+        console.log('Could not enable development logs:', e);
+    }
+
+    // Initialize our Ecwid customizations
+    Ecwid.OnAPILoaded.add(function() {
+        console.log('Ecwid API fully loaded');
         
-        if (page.type == "PRODUCT") {
-            console.log(
-                `
-                Page loaded!
-                Ecwid store ID is: ${Ecwid.getOwnerId()}
-                Product ID is: ${page.productId}
-                `
-            )
-        }
+        Ecwid.OnPageLoaded.add(function(page) {
+            console.log('New page loaded:', page.type);
+            
+            if (page.type == "PRODUCT") {
+                console.log(
+                    `
+                    Product page loaded!
+                    Store ID: ${Ecwid.getOwnerId()}
+                    Product ID: ${page.productId}
+                    `
+                );
+            }
+        });
     });
-});
+}
+
+// Start the initialization process
+waitForEcwid();
