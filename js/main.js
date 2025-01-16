@@ -4,47 +4,33 @@ localStorage.setItem("show_ec_logs", "ALL");
 // Log script location
 console.log('Script location:', document.currentScript?.src || 'Unable to determine source');
 
-// Ensure we have the Ecwid object
-if (typeof Ecwid === 'undefined') {
-    console.error('Ecwid object not found');
-} else {
-    console.log('Ecwid object found');
-}
+// Log initial load
+console.log('Script initializing...');
 
-// Basic test to see if our code is running
-console.log('Main.js loaded - testing Ecwid integration');
+// Create script element for Ecwid integration
+var ecwidScript = document.createElement('script');
+ecwidScript.text = `
+    window.ec = window.ec || {};
+    window.ec.config = window.ec.config || {};
+    window.ec.config.storefrontUrls = window.ec.config.storefrontUrls || {};
 
-// Main Ecwid integration
-Ecwid.OnAPILoaded.add(function() {
-    console.log('Ecwid API loaded - test message');
-    
-    Ecwid.OnPageLoaded.add(function(page) {
-        console.log('Page loaded:', page.type);
+    Ecwid.OnAPILoaded.add(function() {
+        console.log('Ecwid API loaded in store');
         
-        // Log the exact page type we're getting
-        console.log('Current page type:', page.type);
-        
-        // Create red banner regardless of page type
-        const banner = document.createElement('div');
-        banner.style.cssText = 'background-color: red; height: 20px; width: 100%; position: fixed; top: 0; left: 0; z-index: 9999999;';
-        document.body.insertBefore(banner, document.body.firstChild);
-        
-        // Log different page scenarios
-        switch(page.type) {
-            case "PRODUCT":
-                console.log('On product page:', page.productId);
-                console.log('Single product page');
-                // Try to modify the page title as a test
-                document.title = 'Product: ' + page.name;
-                break;
-            case "PRODUCTS":
-                console.log('Products listing page');
-                break;
-            case "CATEGORY":
-                console.log('Category page');
-                break;
-            default:
-                console.log('Other page type:', page.type);
-        }
+        Ecwid.OnPageLoaded.add(function(page) {
+            console.log('Store page loaded:', page.type);
+            
+            // Create red banner
+            const banner = document.createElement('div');
+            banner.style.cssText = 'background-color: red; height: 20px; width: 100%; position: fixed; top: 0; left: 0; z-index: 9999999;';
+            document.body.insertBefore(banner, document.body.firstChild);
+            
+            if (page.type === "PRODUCT") {
+                console.log('Product page detected:', page.productId);
+            }
+        });
     });
-});
+`;
+
+// Add script to page
+document.body.appendChild(ecwidScript);
