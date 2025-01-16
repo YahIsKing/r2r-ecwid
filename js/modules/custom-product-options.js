@@ -1,33 +1,56 @@
 // Custom Product Options Module
 
-const CustomProductOptions = {
-    config: null,
-
-    init: function(storeConfig) {
-        this.config = storeConfig;
-        
-        if (!this.config.modules.productOptions.enabled) {
-            return;
+export class CustomProductOptions {
+    constructor(config) {
+        this.config = config;
+        if (this.config.modules.productOptions.enabled) {
+            this.setupEventListeners();
         }
+    }
 
-        this.setupEventListeners();
-    },
-
-    setupEventListeners: function() {
+    setupEventListeners() {
         // Listen for product page loads
-        Ecwid.OnPageLoaded.add(function(page) {
+        Ecwid.OnPageLoaded.add((page) => {
             if (page.type == 'PRODUCT') {
                 this.initializeProductOptions();
             }
-        }.bind(this));
-    },
+        });
+    }
 
-    initializeProductOptions: function() {
+    initializeProductOptions() {
         // Initialize custom options for the current product
         console.log('Initializing custom product options');
         
-        // Add your custom product options logic here
-    },
+        // Add custom fields to product page
+        const productContainer = document.querySelector('.ec-product-details__description');
+        if (productContainer) {
+            this.addCustomFields(productContainer);
+        }
+    }
 
-    // Add more methods as needed
-};
+    addCustomFields(container) {
+        const customFields = this.config.modules.productOptions.defaultOptions;
+        customFields.forEach(field => {
+            const fieldElement = this.createCustomField(field);
+            container.appendChild(fieldElement);
+        });
+    }
+
+    createCustomField(fieldConfig) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'custom-product-option';
+        
+        const label = document.createElement('label');
+        label.textContent = fieldConfig.label;
+        
+        const input = document.createElement('input');
+        input.type = fieldConfig.type || 'text';
+        input.name = fieldConfig.name;
+        input.required = fieldConfig.required || false;
+        
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        
+        return wrapper;
+    }
+}

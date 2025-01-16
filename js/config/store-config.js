@@ -2,7 +2,7 @@
 
 const storeConfig = {
     // Store specific settings
-    storeId: 'YOUR_STORE_ID',
+    storeId: '106314660',
     
     // Feature flags
     features: {
