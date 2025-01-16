@@ -1,8 +1,3 @@
-// Enable all development logs
-localStorage.setItem("show_ec_logs", "ALL");
-
-console.log('Testing - main.js file loaded');
-
 Ecwid.OnAPILoaded.add(function() {
     Ecwid.OnPageLoaded.add(function(page) {
         // Create red banner
