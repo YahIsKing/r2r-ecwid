@@ -1,3 +1,5 @@
+console.log('Testing - main.js file loaded');
+
 Ecwid.OnAPILoaded.add(function() {
 	Ecwid.OnPageLoaded.add(function(page) {
     if (page.type == "PRODUCT") {
