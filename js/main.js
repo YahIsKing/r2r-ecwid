@@ -1,8 +1,15 @@
 // Main initialization file for Ecwid store customizations
+import { initTestBanner } from './modules/test-banner.js';
+
+// Initialize Ecwid configuration
+window.ec = window.ec || Object();
+window.ec.config = window.ec.config || Object();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize store customizations when DOM is ready
     initializeStoreCustomizations();
+    // Initialize test banner
+    initTestBanner();
 });
 
 function initializeStoreCustomizations() {
@@ -21,5 +28,7 @@ function initializeStoreCustomizations() {
     Ecwid.OnAPILoaded.add(function() {
         console.log('Ecwid API loaded');
         // Add your Ecwid API related code here
+        // Refresh Ecwid config
+        Ecwid.refreshConfig && Ecwid.refreshConfig();
     });
 }
