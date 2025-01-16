@@ -21,11 +21,30 @@ Ecwid.OnAPILoaded.add(function() {
     Ecwid.OnPageLoaded.add(function(page) {
         console.log('Page loaded:', page.type);
         
-        if (page.type == "PRODUCT") {
-            console.log('On product page:', page.productId);
-            
-            // Try to modify the page title as a test
-            document.title = 'Product: ' + page.name;
+        // Log the exact page type we're getting
+        console.log('Current page type:', page.type);
+        
+        // Create red banner regardless of page type
+        const banner = document.createElement('div');
+        banner.style.cssText = 'background-color: red; height: 20px; width: 100%; position: fixed; top: 0; left: 0; z-index: 9999999;';
+        document.body.insertBefore(banner, document.body.firstChild);
+        
+        // Log different page scenarios
+        switch(page.type) {
+            case "PRODUCT":
+                console.log('On product page:', page.productId);
+                console.log('Single product page');
+                // Try to modify the page title as a test
+                document.title = 'Product: ' + page.name;
+                break;
+            case "PRODUCTS":
+                console.log('Products listing page');
+                break;
+            case "CATEGORY":
+                console.log('Category page');
+                break;
+            default:
+                console.log('Other page type:', page.type);
         }
     });
 });
