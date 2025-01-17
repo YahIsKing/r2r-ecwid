@@ -7,20 +7,26 @@ Ecwid.OnAPILoaded.add(function() {
             console.log(`Product page detected - Product ID: ${page.productId}`);
             // Wait for the product details to be loaded in the DOM
             const checkExist = setInterval(function() {
-                const productTitle = document.querySelector('.details-product-name');
-                if (productTitle) {
+                // Look for category information in breadcrumbs
+                const breadcrumbs = document.querySelectorAll('.breadcrumbs__element');
+                const productCategories = Array.from(breadcrumbs).map(el => el.textContent.trim().toLowerCase());
+                console.log('Found categories:', productCategories);
+
+                // Check if any category contains "red sea"
+                const isRedSeaProduct = productCategories.some(category => category.includes('red sea'));
+                
+                if (breadcrumbs.length > 0) {
                     clearInterval(checkExist);
-                    console.log(`Product title found: "${productTitle.textContent}"`);
                     
-                    // Check if it's a Red Sea product
-                    if (productTitle.textContent.toLowerCase().includes('red sea')) {
-                        console.log(`✓ Red Sea product detected! Product ID: ${page.productId}`);
+                    if (isRedSeaProduct) {
+                        console.log(`✓ Red Sea product detected in categories! Product ID: ${page.productId}`);
+                        console.log('Categories:', productCategories);
                         addRedSeaDropshipInfo();
                     } else {
-                        console.log(`✗ Not a Red Sea product: "${productTitle.textContent}"`);
+                        console.log(`✗ Not a Red Sea product. Categories:`, productCategories);
                     }
                 } else {
-                    console.log('Waiting for product title to load...');
+                    console.log('Waiting for product categories to load...');
                 }
             }, 100);
         }
