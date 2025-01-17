@@ -11,7 +11,7 @@
 }
 
 /* Hide sold out label on product page */
-.ins-tile__product-label .ins-tile__product-label--warning {
+.ins-tile--category-products .ins-tile__product-label--warning {
     display: none !important;
 }
 
