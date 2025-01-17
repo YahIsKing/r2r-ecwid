@@ -37,28 +37,49 @@
     function addRedSeaDropshipInfo(product) {
         console.log('Attempting to add Red Sea dropship info button...');
         
-        // Use a more reliable selector based on Ecwid's structure
-        const targetSelector = '.details-product-purchase__section--actions';
+        // List of possible selectors to try, in order of preference
+        const possibleSelectors = [
+            '.details-product-purchase__section--actions',
+            '.details-product-purchase__buttons',
+            '.details-product__sidebar',
+            '.details-product__wrap'
+        ];
+
+        let attempts = 0;
+        const maxAttempts = 20; // 10 seconds total (20 * 500ms)
+        
         const checkExist = setInterval(function() {
-            const targetSection = document.querySelector(targetSelector);
+            attempts++;
             
+            // Try each selector until we find one that exists
+            let targetSection = null;
+            for (const selector of possibleSelectors) {
+                targetSection = document.querySelector(selector);
+                if (targetSection) {
+                    console.log(`Found target section using selector: ${selector}`);
+                    break;
+                }
+            }
+
             if (targetSection) {
                 clearInterval(checkExist);
                 console.log('Found target section, adding Red Sea info button');
                 
                 try {
                     insertRedSeaButton(targetSection, product);
+                    console.log('✓ Red Sea info button added successfully');
                 } catch (error) {
                     console.error('Error adding Red Sea button:', error);
                 }
+            } else {
+                console.log(`Waiting for target section... Attempt ${attempts}/${maxAttempts}`);
+                if (attempts >= maxAttempts) {
+                    clearInterval(checkExist);
+                    console.warn('Timeout waiting for target section. Available elements:', 
+                        document.querySelector('.details-product-purchase') || 'None');
+                }
             }
         }, 500);
-
-        // Clear interval after 10 seconds to prevent infinite checking
-        setTimeout(() => {
-            clearInterval(checkExist);
-            console.warn('Timeout waiting for target section');
-        }, 10000);
     }
 
     function insertRedSeaButton(targetSection, product) {
@@ -72,7 +93,7 @@
         redSeaButton.innerHTML = 'Red Sea Shipping Information';
         buttonContainer.appendChild(redSeaButton);
         
-        // Insert after the add to cart button
+        // Insert the button
         targetSection.appendChild(buttonContainer);
         
         // Create and setup dialog
