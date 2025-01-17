@@ -121,10 +121,10 @@
         styles.textContent = `
             .shipping-info-dialog {
                 border: none !important;
-                border-radius: 8px !important;
+                border-radius: 10px !important;
                 box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-                max-width: 800px !important;
-                width: 90% !important;
+                max-width: 1000px !important;
+                width: 95% !important;
                 padding: 0 !important;
                 background: white !important;
                 position: fixed !important;
@@ -199,7 +199,7 @@
             }
             
             .shipping-info-dialog .ec-modal__header {
-                padding: 20px 30px !important;
+                padding: 25px 38px !important;
                 border-bottom: 1px solid #eee !important;
                 display: flex !important;
                 justify-content: space-between !important;
@@ -209,39 +209,39 @@
             .shipping-info-dialog .ec-modal__header h4 {
                 margin: 0 !important;
                 color: #1e3c72 !important;
-                font-size: 28px !important;
+                font-size: 35px !important;
                 font-weight: 600 !important;
             }
             
             .shipping-info-dialog .ec-modal__close {
                 cursor: pointer;
-                font-size: 28px;
+                font-size: 35px;
                 line-height: 1;
                 color: #666;
-                padding: 10px;
+                padding: 12px;
             }
             
             .shipping-info-dialog .ec-modal__body {
-                padding: 30px !important;
+                padding: 38px !important;
             }
             
             .shipping-info-dialog .shipping-info-content {
-                font-size: 18px !important;
+                font-size: 22px !important;
                 line-height: 1.6 !important;
                 color: #333 !important;
             }
             
             .shipping-info-dialog .shipping-info-content p {
-                margin: 0 0 20px 0 !important;
+                margin: 0 0 25px 0 !important;
             }
             
             .shipping-info-dialog .shipping-info-content ul {
-                margin: 20px 0 !important;
-                padding-left: 25px !important;
+                margin: 25px 0 !important;
+                padding-left: 32px !important;
             }
             
             .shipping-info-dialog .shipping-info-content ul li {
-                margin-bottom: 15px !important;
+                margin-bottom: 20px !important;
                 line-height: 1.5 !important;
             }
             
