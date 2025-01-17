@@ -2,11 +2,19 @@
 Ecwid.OnAPILoaded.add(function() {
     Ecwid.OnPageLoaded.add(function(page) {
         if (page.type == "PRODUCT") {
-            // Get the product name from the page
-            const productTitle = document.querySelector('.details-product-name');
-            if (productTitle && productTitle.textContent.toLowerCase().includes('red sea')) {
-                addRedSeaDropshipInfo();
-            }
+            // Wait for the product details to be loaded in the DOM
+            const checkExist = setInterval(function() {
+                const productTitle = document.querySelector('.details-product-name');
+                if (productTitle) {
+                    clearInterval(checkExist);
+                    
+                    // Check if it's a Red Sea product
+                    if (productTitle.textContent.toLowerCase().includes('red sea')) {
+                        console.log(`Red Sea product detected! Product ID: ${page.productId}`);
+                        addRedSeaDropshipInfo();
+                    }
+                }
+            }, 100);
         }
     });
 });
