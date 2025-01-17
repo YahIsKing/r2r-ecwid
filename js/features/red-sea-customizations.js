@@ -6,31 +6,22 @@ Ecwid.OnAPILoaded.add(function() {
         if (page.type == "PRODUCT") {
             console.log(`Product page detected - Product ID: ${page.productId}`);
             
-            // Wait for the breadcrumbs to be loaded
-            const checkExist = setInterval(function() {
-                // Look for breadcrumb elements
-                const breadcrumbs = document.querySelectorAll('.breadcrumbs__element');
-                if (breadcrumbs.length > 0) {
-                    // Convert breadcrumbs to an array of text
-                    const breadcrumbPath = Array.from(breadcrumbs)
-                        .map(el => el.textContent.trim())
-                        .join(' / ');
-                    
-                    console.log('Breadcrumb path:', breadcrumbPath);
-
-                    // Check if this is a Red Sea product by looking for "Red Sea Products" in the breadcrumbs
-                    const isRedSeaProduct = breadcrumbPath.includes('Red Sea Products');
-                    
-                    if (isRedSeaProduct) {
-                        clearInterval(checkExist);
-                        console.log('✓ Red Sea product detected in breadcrumb path');
-                        addRedSeaDropshipInfo();
-                    } else {
-                        console.log('✗ Not a Red Sea product');
-                        clearInterval(checkExist);
-                    }
+            // Use the API to get product details
+            Ecwid.getProduct(page.productId, function(product) {
+                console.log('Product categories:', product.categories);
+                
+                // Check if any of the product's categories is "Red Sea Products"
+                const isRedSeaProduct = product.categories.some(category => 
+                    category.name === "Red Sea Products"
+                );
+                
+                if (isRedSeaProduct) {
+                    console.log('✓ Red Sea product detected via API');
+                    addRedSeaDropshipInfo();
+                } else {
+                    console.log('✗ Not a Red Sea product');
                 }
-            }, 500);
+            });
         }
     });
 });
