@@ -5,37 +5,25 @@ Ecwid.OnAPILoaded.add(function() {
         console.log(`Page loaded - Type: ${page.type}`);
         if (page.type == "PRODUCT") {
             console.log(`Product page detected - Product ID: ${page.productId}`);
-            console.log('Page details:', page);
             
-            // First try to get category from the page object
-            if (page.categoryId) {
-                console.log(`Category ID found: ${page.categoryId}`);
-            }
-            
-            // Wait for the product details to be loaded in the DOM
+            // Wait for the breadcrumbs to be loaded
             const checkExist = setInterval(function() {
-                // Try multiple selectors for category information
-                const categoryElements = document.querySelectorAll('.breadcrumbs__element, .grid-category__title, .grid-category__name');
-                const productCategories = Array.from(categoryElements).map(el => el.textContent.trim().toLowerCase());
+                // Check the breadcrumb path
+                const breadcrumbPath = window.location.pathname;
+                console.log('Current path:', breadcrumbPath);
+
+                // Look for "Red Sea Products" in the breadcrumb text
+                const breadcrumbText = document.body.textContent;
+                const isRedSeaProduct = breadcrumbText.includes('Red Sea Products');
                 
-                if (categoryElements.length > 0) {
+                if (isRedSeaProduct) {
                     clearInterval(checkExist);
-                    console.log('Found categories:', productCategories);
-                    
-                    // Check if any category contains "red sea"
-                    const isRedSeaProduct = productCategories.some(category => category.includes('red sea'));
-                    
-                    if (isRedSeaProduct) {
-                        console.log(`✓ Red Sea product detected! Product ID: ${page.productId}`);
-                        console.log('Categories:', productCategories);
-                        addRedSeaDropshipInfo();
-                    } else {
-                        console.log(`✗ Not a Red Sea product. Categories:`, productCategories);
-                    }
+                    console.log('✓ Red Sea product detected in breadcrumb path');
+                    addRedSeaDropshipInfo();
                 } else {
-                    console.log('Waiting for product categories to load...');
+                    console.log('✗ Not a Red Sea product path');
                 }
-            }, 100);
+            }, 500); // Increased interval to ensure page loads
         }
     });
 });
@@ -43,18 +31,25 @@ Ecwid.OnAPILoaded.add(function() {
 function addRedSeaDropshipInfo() {
     // Wait for the "Order from warehouse" button to be present
     const checkExist = setInterval(function() {
-        const addToCartButton = document.querySelector('.details-product-purchase__button');
-        if (addToCartButton) {
+        const orderButton = document.querySelector('button.order-from-warehouse');
+        if (orderButton) {
             clearInterval(checkExist);
             
             // Create and insert the Red Sea info button
             const redSeaButton = document.createElement('button');
-            redSeaButton.className = 'red-sea-info-btn details-product-purchase__button';
+            redSeaButton.className = 'red-sea-info-btn';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
             redSeaButton.style.marginTop = '10px';
+            redSeaButton.style.width = '100%';
+            redSeaButton.style.padding = '13px 0';
+            redSeaButton.style.backgroundColor = '#2196F3';
+            redSeaButton.style.color = 'white';
+            redSeaButton.style.border = 'none';
+            redSeaButton.style.borderRadius = '4px';
+            redSeaButton.style.cursor = 'pointer';
             
-            // Insert the button after the "Order from warehouse" button
-            addToCartButton.parentNode.insertBefore(redSeaButton, addToCartButton.nextSibling);
+            // Insert the button after the order button
+            orderButton.parentNode.insertBefore(redSeaButton, orderButton.nextSibling);
             
             // Create the dialog
             const dialog = document.createElement('dialog');
@@ -87,20 +82,6 @@ function addRedSeaDropshipInfo() {
             // Add styles
             const style = document.createElement('style');
             style.textContent = `
-                .red-sea-info-btn {
-                    width: 100%;
-                    background-color: #2196F3;
-                    color: white;
-                    border: none;
-                    padding: 10px 20px;
-                    cursor: pointer;
-                    transition: background-color 0.3s;
-                }
-                
-                .red-sea-info-btn:hover {
-                    background-color: #1976D2;
-                }
-                
                 .red-sea-dialog {
                     padding: 20px;
                     border: none;
@@ -139,5 +120,5 @@ function addRedSeaDropshipInfo() {
             `;
             document.head.appendChild(style);
         }
-    }, 100);
+    }, 500);
 }
