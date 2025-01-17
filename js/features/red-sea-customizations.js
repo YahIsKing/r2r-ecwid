@@ -133,6 +133,10 @@
                 margin: 16px 0;
                 padding-left: 20px;
             }
+            
+            .shipping-info-button {
+                cursor: pointer;
+            }
         `;
         document.head.appendChild(styles);
     }
