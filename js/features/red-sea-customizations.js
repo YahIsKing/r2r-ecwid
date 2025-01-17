@@ -115,6 +115,14 @@
         });
     }
 
+    // Initialize shipping buttons
+    function initShippingButtons() {
+        const buttons = document.querySelectorAll('.shipping-info-button');
+        buttons.forEach(button => {
+            setupShippingButtons(button);
+        });
+    }
+
     // Add the necessary styles
     function addRedSeaStyles() {
         const styles = document.createElement('style');
@@ -268,6 +276,29 @@
 
     // Initialize styles
     addRedSeaStyles();
+
+    // Setup event listeners
+    if (typeof Ecwid !== 'undefined') {
+        // Handle initial page load
+        initShippingButtons();
+
+        // Handle subsequent page loads
+        Ecwid.OnPageLoaded.add(function(page) {
+            initShippingButtons();
+        });
+
+        // Handle dynamic content changes (like when products load)
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    initShippingButtons();
+                }
+            });
+        });
+
+        // Start observing the document with the configured parameters
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
 
     // Register handlers with EventManager
     EventManager.addHandler('product', handleProductPage);
