@@ -12,36 +12,39 @@
                 return;
             }
 
-            // Get product details using the correct API method
-            Ecwid.Cart.get(function(cart) {
-                try {
-                    // Get product details from the page data
-                    const product = {
-                        id: page.productId,
-                        name: page.name,
-                        categories: page.categories || []
-                    };
+            // Process the product data from the page object
+            const product = {
+                id: page.productId,
+                name: page.nameTranslated?.en || page.name,
+                categories: page.categories || []
+            };
 
-                    console.log('Product details:', product);
-                    
-                    // Check if any of the product's categories is "Red Sea Products"
-                    const isRedSeaProduct = product.categories.some(category => 
-                        category.name === "Red Sea Products"
-                    );
-                    
-                    if (isRedSeaProduct) {
-                        console.log('✓ Red Sea product detected');
-                        addRedSeaDropshipInfo(product);
-                    } else {
-                        console.log('✗ Not a Red Sea product');
-                    }
-                } catch (error) {
-                    console.error('Error processing product data:', error);
-                }
-            });
+            console.log('Product details:', product);
+            
+            // Check if this is a Red Sea product based on category ID or name
+            if (isRedSeaProduct(product)) {
+                console.log('✓ Red Sea product detected');
+                addRedSeaDropshipInfo(product);
+            } else {
+                console.log('✗ Not a Red Sea product');
+            }
+
         } catch (error) {
-            console.error('Error in product API call:', error);
+            console.error('Error in product handler:', error);
         }
+    }
+
+    // Helper function to check if a product is a Red Sea product
+    function isRedSeaProduct(product) {
+        // Check product categories
+        if (Array.isArray(product.categories)) {
+            return product.categories.some(category => 
+                category.name === "Red Sea Products" || 
+                category.nameTranslated?.en === "Red Sea Products"
+            );
+        }
+        // If no categories, check product name
+        return product.name.toLowerCase().includes('red sea');
     }
 
     // Add Red Sea dropship information to the product page

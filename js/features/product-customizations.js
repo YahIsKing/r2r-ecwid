@@ -15,9 +15,10 @@
         console.log(
             `
             Page loaded!
-            Ecwid store ID is: ${Ecwid.getOwnerId()}
-            Product ID is: ${page.productId}
-            Product Name is: ${page.name}
+            Ecwid store ID: ${Ecwid.getOwnerId()}
+            Product ID: ${page.productId}
+            Product Name: ${page.nameTranslated?.en || page.name}
+            Categories: ${JSON.stringify(page.categories || [])}
             `
         );
     }
@@ -25,26 +26,28 @@
     // Customize product page
     function customizeProductPage(page) {
         try {
-            // Get cart data to access product information
-            Ecwid.Cart.get(function(cart) {
-                try {
-                    const product = {
-                        id: page.productId,
-                        name: page.name
-                    };
-                    
-                    console.log('Product details loaded:', product.name);
-                    // Add your product customizations here
-                    // For example:
-                    // - Modify product layout
-                    // - Add custom buttons
-                    // - Change styling
-                } catch (error) {
-                    console.error('Error processing product data:', error);
-                }
-            });
+            const product = {
+                id: page.productId,
+                name: page.nameTranslated?.en || page.name,
+                categories: page.categories || []
+            };
+            
+            console.log('Processing product:', product.name);
+            
+            // Add your product customizations here
+            // For example:
+            // - Modify product layout
+            // - Add custom buttons
+            // - Change styling
+            
+            // Example: Add a custom class to the product container
+            const productContainer = document.querySelector('.ec-product-page');
+            if (productContainer) {
+                productContainer.classList.add('custom-product-view');
+            }
+
         } catch (error) {
-            console.error('Error getting cart data:', error);
+            console.error('Error customizing product page:', error);
         }
     }
 
