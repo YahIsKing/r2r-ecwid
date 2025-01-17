@@ -1,18 +1,26 @@
 // Red Sea product customizations
 Ecwid.OnAPILoaded.add(function() {
+    console.log('Red Sea customization script loaded');
     Ecwid.OnPageLoaded.add(function(page) {
+        console.log(`Page loaded - Type: ${page.type}`);
         if (page.type == "PRODUCT") {
+            console.log(`Product page detected - Product ID: ${page.productId}`);
             // Wait for the product details to be loaded in the DOM
             const checkExist = setInterval(function() {
                 const productTitle = document.querySelector('.details-product-name');
                 if (productTitle) {
                     clearInterval(checkExist);
+                    console.log(`Product title found: "${productTitle.textContent}"`);
                     
                     // Check if it's a Red Sea product
                     if (productTitle.textContent.toLowerCase().includes('red sea')) {
-                        console.log(`Red Sea product detected! Product ID: ${page.productId}`);
+                        console.log(`✓ Red Sea product detected! Product ID: ${page.productId}`);
                         addRedSeaDropshipInfo();
+                    } else {
+                        console.log(`✗ Not a Red Sea product: "${productTitle.textContent}"`);
                     }
+                } else {
+                    console.log('Waiting for product title to load...');
                 }
             }, 100);
         }
