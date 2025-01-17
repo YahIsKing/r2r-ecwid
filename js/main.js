@@ -1,24 +1,15 @@
+// Initialize Ecwid API and load feature modules
 Ecwid.OnAPILoaded.add(function() {
-	Ecwid.OnPageLoaded.add(function(page) {
-    if (page.type == "PRODUCT") {
-       console.log(
-        `
-       Page loaded!
-       Ecwid store ID is: ${Ecwid.getOwnerId()}
-       Product ID is: ${page.productId}
-        `
-       )
-    }
-	})
-})
+    // Load feature-specific files
+    const featureFiles = [
+        'features/product-customizations.js',
+        'features/category-customizations.js'
+    ];
 
-Ecwid.OnAPILoaded.add(function() {
-    Ecwid.OnPageLoaded.add(function(page) {
-        if (page.type == "CATEGORY" && page.categoryId == 0) { // categoryId 0 is the home page
-            const soldOutLabels = document.querySelectorAll('.ins-tile__product-label--outofstock');
-            soldOutLabels.forEach(label => {
-                label.style.display = 'none';
-            });
-        }
+    featureFiles.forEach(file => {
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = `/js/${file}`;
+        document.head.appendChild(script);
     });
 });
