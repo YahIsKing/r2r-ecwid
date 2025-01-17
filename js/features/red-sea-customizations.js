@@ -4,7 +4,6 @@
     function handleProductPage(page) {
         console.log(`Product page detected - Product ID: ${page.productId}`);
         
-        // Use the API to get product details with proper error handling
         try {
             // First check if we're in the correct storefront version
             if (!Ecwid.isStorefrontV3()) {
@@ -12,23 +11,17 @@
                 return;
             }
 
-            // Get complete product details using Product Browser API
-            Ecwid.ProductBrowser.getProduct(function(product) {
-                if (!product) {
-                    console.error('Product data not available');
-                    return;
-                }
+            // Get the product name from the page data
+            const productName = page.name || '';
+            console.log('Checking product:', productName);
 
-                console.log('Complete product details:', product);
-                
-                // Check if this is a Red Sea product based on category
-                if (isRedSeaProduct(product)) {
-                    console.log('✓ Red Sea product detected');
-                    addRedSeaDropshipInfo(product);
-                } else {
-                    console.log('✗ Not a Red Sea product');
-                }
-            });
+            // Check if this is a Red Sea product based on name
+            if (isRedSeaProduct(productName)) {
+                console.log('✓ Red Sea product detected');
+                addRedSeaDropshipInfo({ id: page.productId, name: productName });
+            } else {
+                console.log('✗ Not a Red Sea product');
+            }
 
         } catch (error) {
             console.error('Error in product handler:', error);
@@ -36,26 +29,8 @@
     }
 
     // Helper function to check if a product is a Red Sea product
-    function isRedSeaProduct(product) {
-        // Check if we have category data
-        if (product.categories && product.categories.length > 0) {
-            // Log all categories for debugging
-            console.log('Product categories:', product.categories);
-            
-            // Check each category and its parent categories
-            return product.categories.some(categoryId => {
-                const category = Ecwid.ProductBrowser.getCategoryById(categoryId);
-                if (category) {
-                    console.log('Checking category:', category.name);
-                    return category.name === "Red Sea Products" || 
-                           (category.parentCategory && category.parentCategory.name === "Red Sea Products");
-                }
-                return false;
-            });
-        }
-        
-        // If no categories, check product name as fallback
-        return product.name.toLowerCase().includes('red sea');
+    function isRedSeaProduct(productName) {
+        return productName.toLowerCase().includes('red sea');
     }
 
     // Add Red Sea dropship information to the product page
