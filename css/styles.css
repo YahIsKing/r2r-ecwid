@@ -10,4 +10,9 @@
     display: none !important;
 }
 
+/* Hide sold out label on product page */
+.ins-tile__product-label .ins-tile__product-label--warning {
+    display: none !important;
+}
+
 /* Add any additional custom styles here */
