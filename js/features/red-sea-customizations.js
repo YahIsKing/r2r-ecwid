@@ -208,7 +208,7 @@
             
             .shipping-info-dialog .ec-modal__header h4 {
                 margin: 0 !important;
-                color: #1e3c72 !important;
+                color: #E41E31 !important;
                 font-size: 35px !important;
                 font-weight: 600 !important;
             }
