@@ -1,8 +1,5 @@
 // Red Sea product customizations
 (function() {
-    let buttonAdded = false;
-    let currentProductId = null;
-
     // Handler for product pages
     function handleProductPage(page) {
         console.log(`Product page detected - Product ID: ${page.productId}`);
@@ -14,163 +11,134 @@
                 return;
             }
 
-            // Reset button state if we're on a different product
-            if (currentProductId !== page.productId) {
-                buttonAdded = false;
-                currentProductId = page.productId;
-            }
-
-            // Get the product name from the page data
-            const productName = page.name || '';
-            console.log('Checking product:', productName);
-
-            // Check if this is a Red Sea product based on name
-            if (isRedSeaProduct(productName)) {
-                console.log('✓ Red Sea product detected');
-                const product = { id: page.productId, name: productName };
-                
-                // Add handlers for page state changes
-                Ecwid.OnPageLoaded.add(function(loadedPage) {
-                    if (loadedPage.type === 'PRODUCT' && loadedPage.productId === product.id) {
-                        // Small delay to ensure DOM is fully rendered
-                        setTimeout(() => {
-                            if (!buttonAdded) {
-                                addRedSeaDropshipInfo(product);
-                            }
-                        }, 500);
-                    }
-                });
-
-                // Also handle product option changes
-                Ecwid.OnSetProduct.add(function(product) {
-                    if (!buttonAdded) {
-                        addRedSeaDropshipInfo({ id: product.id, name: product.name });
-                    }
-                });
-            } else {
-                console.log('✗ Not a Red Sea product');
-            }
+            // Set up a one-time listener for the page load
+            Ecwid.OnPageLoaded.add(function(loadedPage) {
+                if (loadedPage.type === 'PRODUCT') {
+                    // Small delay to ensure description is loaded
+                    setTimeout(() => {
+                        setupShippingButtons(page);
+                    }, 500);
+                }
+            });
 
         } catch (error) {
             console.error('Error in product handler:', error);
         }
     }
 
-    // Helper function to check if a product is a Red Sea product
-    function isRedSeaProduct(productName) {
-        return productName.toLowerCase().includes('red sea');
-    }
-
-    // Add Red Sea dropship information to the product page
-    function addRedSeaDropshipInfo(product) {
-        console.log('Adding Red Sea dropship info button...');
+    // Setup shipping info buttons in the description
+    function setupShippingButtons(page) {
+        // Find all shipping info buttons in the description
+        const buttons = document.querySelectorAll('.shipping-info-button');
         
-        try {
-            // Get the product details sidebar
-            const sidebar = document.querySelector('.product-details__sidebar');
-            
-            if (!sidebar) {
-                console.error('Product sidebar not found');
-                return;
+        buttons.forEach(button => {
+            if (!button.dataset.initialized) {
+                console.log('Setting up shipping info button');
+                
+                // Create and setup dialog for this button
+                setupRedSeaDialog(button, {
+                    id: page.productId,
+                    name: page.name || ''
+                });
+                
+                // Mark as initialized
+                button.dataset.initialized = 'true';
             }
-
-            // Find the action panel section
-            const actionPanel = sidebar.querySelector('.product-details-module.product-details__action-panel.details-product-purchase');
-            
-            if (!actionPanel) {
-                console.error('Action panel not found');
-                return;
-            }
-
-            // Check if button already exists
-            if (sidebar.querySelector('.red-sea-info-button')) {
-                console.log('Red Sea info button already exists');
-                buttonAdded = true;
-                return;
-            }
-
-            // Create button module container
-            const moduleContainer = document.createElement('div');
-            moduleContainer.className = 'product-details-module product-details__action-panel details-product-purchase';
-
-            // Create module content container
-            const moduleContent = document.createElement('div');
-            moduleContent.className = 'product-details-module__content product-details-module__content--indented';
-
-            // Create the Red Sea info button
-            const redSeaButton = document.createElement('button');
-            redSeaButton.className = 'form-control form-control--button form-control--large form-control--primary red-sea-info-button';
-            redSeaButton.innerHTML = 'Red Sea Shipping Information';
-            moduleContent.appendChild(redSeaButton);
-
-            // Add content to module container
-            moduleContainer.appendChild(moduleContent);
-            
-            // Insert after the action panel
-            actionPanel.parentNode.insertBefore(moduleContainer, actionPanel.nextSibling);
-            console.log('✓ Red Sea info button added successfully');
-            buttonAdded = true;
-            
-            // Create and setup dialog
-            setupRedSeaDialog(redSeaButton, product);
-            
-            // Add styles that match Ecwid's design system
-            addRedSeaStyles();
-            
-        } catch (error) {
-            console.error('Error adding Red Sea button:', error);
-            buttonAdded = false; // Reset flag to allow retry
-        }
+        });
     }
 
+    // Create and setup the shipping info dialog
     function setupRedSeaDialog(button, product) {
-        const dialog = document.createElement('dialog');
-        dialog.className = 'ec-modal red-sea-dialog';
-        dialog.innerHTML = `
-            <div class="ec-modal__content red-sea-dialog-content">
-                <h2 class="ec-header-h4">Red Sea Drop Shipping Information</h2>
-                <p class="ec-text-muted">Red Sea aquariums are shipped directly from the manufacturer's warehouse to ensure safe delivery of your aquarium.</p>
-                <div class="ec-text">
-                    <p><strong>Important details for ${product.name}:</strong></p>
-                    <ul>
-                        <li>Shipping typically takes 5-7 business days</li>
-                        <li>You will receive tracking information once the item ships</li>
-                        <li>Curbside delivery is included</li>
-                        <li>Please inspect the aquarium upon delivery</li>
-                    </ul>
+        // Create dialog if it doesn't exist
+        let dialog = document.getElementById('shipping-info-dialog');
+        if (!dialog) {
+            dialog = document.createElement('dialog');
+            dialog.id = 'shipping-info-dialog';
+            dialog.className = 'ec-modal shipping-info-dialog';
+            
+            // Add dialog content
+            dialog.innerHTML = `
+                <div class="ec-modal__header">
+                    <h4 class="ec-header-h4">Shipping Information</h4>
+                    <div class="ec-modal__close" onclick="this.closest('dialog').close()">×</div>
+                </div>
+                <div class="ec-modal__body">
+                    <div class="shipping-info-content">
+                        <p>This item will be shipped directly from our warehouse:</p>
+                        <ul>
+                            <li>Free shipping on orders over $299</li>
+                            <li>Usually ships within 1-2 business days</li>
+                            <li>Tracking information will be provided</li>
+                        </ul>
+                        <p>For any shipping questions, please contact us.</p>
+                    </div>
                 </div>
                 <div class="ec-modal__footer">
-                    <button class="form-control button button--secondary close-dialog">Close</button>
+                    <button class="form-control form-control--button form-control--small" onclick="this.closest('dialog').close()">Close</button>
                 </div>
-            </div>
-        `;
-        document.body.appendChild(dialog);
+            `;
+            
+            document.body.appendChild(dialog);
+        }
         
-        // Add click handlers
-        button.addEventListener('click', () => {
+        // Add click handler to button
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
             dialog.showModal();
-        });
-        
-        dialog.querySelector('.close-dialog').addEventListener('click', () => {
-            dialog.close();
         });
     }
 
+    // Add the necessary styles
     function addRedSeaStyles() {
         const styles = document.createElement('style');
         styles.textContent = `
-            .product-details-module.product-details__action-panel {
-                margin: 15px 0;
-            }
-            .product-details-module__content--indented {
+            .shipping-info-dialog {
+                border: none;
+                border-radius: 8px;
+                box-shadow: var(--ec-modal-shadow);
+                max-width: 500px;
+                width: 90%;
                 padding: 0;
             }
-            .form-control--button.form-control--large {
-                width: 100%;
+            
+            .shipping-info-dialog::backdrop {
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+            
+            .shipping-info-dialog .ec-modal__header {
+                padding: 20px 24px;
+                border-bottom: 1px solid var(--ec-modal-border-color);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .shipping-info-dialog .ec-modal__close {
+                cursor: pointer;
+                font-size: 24px;
+                line-height: 1;
+            }
+            
+            .shipping-info-dialog .ec-modal__body {
+                padding: 24px;
+            }
+            
+            .shipping-info-dialog .ec-modal__footer {
+                padding: 16px 24px;
+                border-top: 1px solid var(--ec-modal-border-color);
+                text-align: right;
+            }
+            
+            .shipping-info-content ul {
+                margin: 16px 0;
+                padding-left: 20px;
             }
         `;
         document.head.appendChild(styles);
     }
+
+    // Initialize styles
+    addRedSeaStyles();
 
     // Register handlers with EventManager
     EventManager.addHandler('product', handleProductPage);
