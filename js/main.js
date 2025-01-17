@@ -3,7 +3,8 @@ Ecwid.OnAPILoaded.add(function() {
     // Load feature-specific files
     const featureFiles = [
         'features/product-customizations.js',
-        'features/category-customizations.js'
+        'features/category-customizations.js',
+        'features/red-sea-customizations.js'
     ];
 
     featureFiles.forEach(file => {
