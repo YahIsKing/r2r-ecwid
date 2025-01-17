@@ -17,24 +17,35 @@
             Page loaded!
             Ecwid store ID is: ${Ecwid.getOwnerId()}
             Product ID is: ${page.productId}
+            Product Name is: ${page.name}
             `
         );
     }
 
     // Customize product page
     function customizeProductPage(page) {
-        Ecwid.getProduct(page.productId, function(product) {
-            try {
-                // Add your product customizations here
-                // For example:
-                // - Modify product layout
-                // - Add custom buttons
-                // - Change styling
-                console.log('Product details loaded:', product.name);
-            } catch (error) {
-                console.error('Error customizing product page:', error);
-            }
-        });
+        try {
+            // Get cart data to access product information
+            Ecwid.Cart.get(function(cart) {
+                try {
+                    const product = {
+                        id: page.productId,
+                        name: page.name
+                    };
+                    
+                    console.log('Product details loaded:', product.name);
+                    // Add your product customizations here
+                    // For example:
+                    // - Modify product layout
+                    // - Add custom buttons
+                    // - Change styling
+                } catch (error) {
+                    console.error('Error processing product data:', error);
+                }
+            });
+        } catch (error) {
+            console.error('Error getting cart data:', error);
+        }
     }
 
     // Handle product option changes

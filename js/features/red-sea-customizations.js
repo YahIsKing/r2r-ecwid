@@ -12,14 +12,17 @@
                 return;
             }
 
-            Ecwid.getProduct(page.productId, function(product) {
+            // Get product details using the correct API method
+            Ecwid.Cart.get(function(cart) {
                 try {
-                    if (!product) {
-                        console.error('Product data not available');
-                        return;
-                    }
+                    // Get product details from the page data
+                    const product = {
+                        id: page.productId,
+                        name: page.name,
+                        categories: page.categories || []
+                    };
 
-                    console.log('Product categories:', product.categories);
+                    console.log('Product details:', product);
                     
                     // Check if any of the product's categories is "Red Sea Products"
                     const isRedSeaProduct = product.categories.some(category => 
@@ -27,7 +30,7 @@
                     );
                     
                     if (isRedSeaProduct) {
-                        console.log('✓ Red Sea product detected via API');
+                        console.log('✓ Red Sea product detected');
                         addRedSeaDropshipInfo(product);
                     } else {
                         console.log('✗ Not a Red Sea product');
