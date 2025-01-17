@@ -2,13 +2,11 @@
 Ecwid.OnAPILoaded.add(function() {
     Ecwid.OnPageLoaded.add(function(page) {
         if (page.type == "PRODUCT") {
-            // Get the product details
-            Ecwid.getProduct(page.productId, function(product) {
-                // Check if it's a Red Sea aquarium by looking for "Red Sea" in the title
-                if (product.name.toLowerCase().includes('red sea')) {
-                    addRedSeaDropshipInfo();
-                }
-            });
+            // Get the product name from the page
+            const productTitle = document.querySelector('.details-product-name');
+            if (productTitle && productTitle.textContent.toLowerCase().includes('red sea')) {
+                addRedSeaDropshipInfo();
+            }
         }
     });
 });
