@@ -6,7 +6,7 @@
 }
 
 /* Hide sold out label on home page */
-.ins-tile_products .ins-tile_product-label.ins-tile_product-label--outofstock {
+.ins-tile--category-products .ins-tile__product-label--outofstock {
     display: none !important;
 }
 
