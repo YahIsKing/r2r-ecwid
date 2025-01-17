@@ -83,12 +83,41 @@
             `;
             
             document.body.appendChild(dialog);
+
+            // Add close animation handler
+            dialog.addEventListener('close', () => {
+                dialog.removeAttribute('closing');
+            });
         }
         
         // Add click handler to button
         button.addEventListener('click', (e) => {
             e.preventDefault();
             dialog.showModal();
+        });
+
+        // Add close button handler with animation
+        const closeBtn = dialog.querySelector('.ec-modal__close');
+        const closeButton = dialog.querySelector('.ec-modal__footer button');
+        
+        [closeBtn, closeButton].forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                dialog.setAttribute('closing', '');
+                setTimeout(() => {
+                    dialog.close();
+                }, 200); // Match animation duration
+            });
+        });
+
+        // Close on backdrop click
+        dialog.addEventListener('click', (e) => {
+            if (e.target === dialog) {
+                dialog.setAttribute('closing', '');
+                setTimeout(() => {
+                    dialog.close();
+                }, 200);
+            }
         });
     }
 
@@ -104,10 +133,75 @@
                 width: 90% !important;
                 padding: 0 !important;
                 background: white !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) scale(0.7) !important;
+                margin: 0 !important;
+                opacity: 0;
+                animation: dialogPopIn 0.3s ease-out forwards !important;
+            }
+            
+            @keyframes dialogPopIn {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.7) !important;
+                }
+                45% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1.05) !important;
+                }
+                80% {
+                    transform: translate(-50%, -50%) scale(0.95) !important;
+                }
+                100% {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1) !important;
+                }
             }
             
             .shipping-info-dialog::backdrop {
                 background-color: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                animation: backdropFadeIn 0.3s ease-out forwards !important;
+            }
+
+            @keyframes backdropFadeIn {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+            /* Add animation for closing */
+            .shipping-info-dialog[closing] {
+                animation: dialogPopOut 0.2s ease-in forwards !important;
+            }
+
+            .shipping-info-dialog[closing]::backdrop {
+                animation: backdropFadeOut 0.2s ease-in forwards !important;
+            }
+
+            @keyframes dialogPopOut {
+                from {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1) !important;
+                }
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.7) !important;
+                }
+            }
+
+            @keyframes backdropFadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
             }
             
             .shipping-info-dialog .ec-modal__header {
