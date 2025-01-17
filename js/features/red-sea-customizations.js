@@ -1,5 +1,7 @@
 // Red Sea product customizations
 (function() {
+    let buttonAdded = false; // Flag to prevent multiple button additions
+
     // Handler for product pages
     function handleProductPage(page) {
         console.log(`Product page detected - Product ID: ${page.productId}`);
@@ -18,7 +20,21 @@
             // Check if this is a Red Sea product based on name
             if (isRedSeaProduct(productName)) {
                 console.log('✓ Red Sea product detected');
-                addRedSeaDropshipInfo({ id: page.productId, name: productName });
+                const product = { id: page.productId, name: productName };
+                
+                // Set up a one-time listener for the page load
+                if (!buttonAdded) {
+                    buttonAdded = true;
+                    Ecwid.OnPageLoaded.add(function(loadedPage) {
+                        if (loadedPage.type === 'PRODUCT' && loadedPage.productId === product.id) {
+                            console.log('Product page fully loaded, adding Red Sea info...');
+                            addRedSeaDropshipInfo(product);
+                        }
+                    });
+                    
+                    // Refresh the page to ensure proper loading
+                    Ecwid.refreshPage();
+                }
             } else {
                 console.log('✗ Not a Red Sea product');
             }
@@ -35,72 +51,41 @@
 
     // Add Red Sea dropship information to the product page
     function addRedSeaDropshipInfo(product) {
-        console.log('Attempting to add Red Sea dropship info button...');
+        console.log('Adding Red Sea dropship info button...');
         
-        // List of possible selectors to try, in order of preference
-        const possibleSelectors = [
-            '.details-product-purchase__section--actions',
-            '.details-product-purchase__buttons',
-            '.details-product__sidebar',
-            '.details-product__wrap'
-        ];
-
-        let attempts = 0;
-        const maxAttempts = 20; // 10 seconds total (20 * 500ms)
-        
-        const checkExist = setInterval(function() {
-            attempts++;
+        try {
+            // Get the product details section
+            const productDetails = document.querySelector('.details-product-purchase__section');
             
-            // Try each selector until we find one that exists
-            let targetSection = null;
-            for (const selector of possibleSelectors) {
-                targetSection = document.querySelector(selector);
-                if (targetSection) {
-                    console.log(`Found target section using selector: ${selector}`);
-                    break;
-                }
+            if (!productDetails) {
+                console.error('Product details section not found');
+                return;
             }
 
-            if (targetSection) {
-                clearInterval(checkExist);
-                console.log('Found target section, adding Red Sea info button');
-                
-                try {
-                    insertRedSeaButton(targetSection, product);
-                    console.log('✓ Red Sea info button added successfully');
-                } catch (error) {
-                    console.error('Error adding Red Sea button:', error);
-                }
-            } else {
-                console.log(`Waiting for target section... Attempt ${attempts}/${maxAttempts}`);
-                if (attempts >= maxAttempts) {
-                    clearInterval(checkExist);
-                    console.warn('Timeout waiting for target section. Available elements:', 
-                        document.querySelector('.details-product-purchase') || 'None');
-                }
-            }
-        }, 500);
-    }
-
-    function insertRedSeaButton(targetSection, product) {
-        // Create button container to match Ecwid's structure
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'details-product-purchase__button-wrapper red-sea-info-wrapper';
-        
-        // Create the Red Sea info button
-        const redSeaButton = document.createElement('button');
-        redSeaButton.className = 'form-control button button--large button--primary red-sea-info-btn';
-        redSeaButton.innerHTML = 'Red Sea Shipping Information';
-        buttonContainer.appendChild(redSeaButton);
-        
-        // Insert the button
-        targetSection.appendChild(buttonContainer);
-        
-        // Create and setup dialog
-        setupRedSeaDialog(redSeaButton, product);
-        
-        // Add styles that match Ecwid's design system
-        addRedSeaStyles();
+            // Create button container
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'details-product-purchase__button-wrapper red-sea-info-wrapper';
+            
+            // Create the Red Sea info button
+            const redSeaButton = document.createElement('button');
+            redSeaButton.className = 'form-control button button--large button--primary red-sea-info-btn';
+            redSeaButton.innerHTML = 'Red Sea Shipping Information';
+            buttonContainer.appendChild(redSeaButton);
+            
+            // Insert the button into the product details section
+            productDetails.appendChild(buttonContainer);
+            console.log('✓ Red Sea info button added successfully');
+            
+            // Create and setup dialog
+            setupRedSeaDialog(redSeaButton, product);
+            
+            // Add styles that match Ecwid's design system
+            addRedSeaStyles();
+            
+        } catch (error) {
+            console.error('Error adding Red Sea button:', error);
+            buttonAdded = false; // Reset flag to allow retry
+        }
     }
 
     function setupRedSeaDialog(button, product) {
