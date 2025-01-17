@@ -5,4 +5,9 @@
     margin: 15px 0;
 }
 
+/* Hide sold out label on home page */
+.ec-store__category-page--home .ins-tile__product-label--outofstock {
+    display: none !important;
+}
+
 /* Add any additional custom styles here */
