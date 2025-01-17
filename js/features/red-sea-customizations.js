@@ -5,21 +5,28 @@ Ecwid.OnAPILoaded.add(function() {
         console.log(`Page loaded - Type: ${page.type}`);
         if (page.type == "PRODUCT") {
             console.log(`Product page detected - Product ID: ${page.productId}`);
+            console.log('Page details:', page);
+            
+            // First try to get category from the page object
+            if (page.categoryId) {
+                console.log(`Category ID found: ${page.categoryId}`);
+            }
+            
             // Wait for the product details to be loaded in the DOM
             const checkExist = setInterval(function() {
-                // Look for category information in breadcrumbs
-                const breadcrumbs = document.querySelectorAll('.breadcrumbs__element');
-                const productCategories = Array.from(breadcrumbs).map(el => el.textContent.trim().toLowerCase());
-                console.log('Found categories:', productCategories);
-
-                // Check if any category contains "red sea"
-                const isRedSeaProduct = productCategories.some(category => category.includes('red sea'));
+                // Try multiple selectors for category information
+                const categoryElements = document.querySelectorAll('.breadcrumbs__element, .grid-category__title, .grid-category__name');
+                const productCategories = Array.from(categoryElements).map(el => el.textContent.trim().toLowerCase());
                 
-                if (breadcrumbs.length > 0) {
+                if (categoryElements.length > 0) {
                     clearInterval(checkExist);
+                    console.log('Found categories:', productCategories);
+                    
+                    // Check if any category contains "red sea"
+                    const isRedSeaProduct = productCategories.some(category => category.includes('red sea'));
                     
                     if (isRedSeaProduct) {
-                        console.log(`✓ Red Sea product detected in categories! Product ID: ${page.productId}`);
+                        console.log(`✓ Red Sea product detected! Product ID: ${page.productId}`);
                         console.log('Categories:', productCategories);
                         addRedSeaDropshipInfo();
                     } else {
