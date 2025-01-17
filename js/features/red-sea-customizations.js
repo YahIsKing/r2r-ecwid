@@ -54,26 +54,46 @@
         console.log('Adding Red Sea dropship info button...');
         
         try {
-            // Get the product details action panel section
-            const actionPanel = document.querySelector('.product-details__action-panel.details-product-purchase');
+            // Get the product details sidebar
+            const sidebar = document.querySelector('.product-details__sidebar');
             
-            if (!actionPanel) {
-                console.error('Product action panel not found');
+            if (!sidebar) {
+                console.error('Product sidebar not found');
                 return;
             }
 
-            // Create button container that matches Ecwid's structure
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'product-details-module product-details__action-panel details-product-purchase';
+            // Find the action panel section
+            const actionPanel = sidebar.querySelector('.product-details-module.product-details__action-panel.details-product-purchase');
             
-            // Create the Red Sea info button with matching Ecwid styles
+            if (!actionPanel) {
+                console.error('Action panel not found');
+                return;
+            }
+
+            // Create button module container
+            const moduleContainer = document.createElement('div');
+            moduleContainer.className = 'product-details-module product-details__action-panel details-product-purchase';
+
+            // Create module title (optional header)
+            const moduleTitle = document.createElement('div');
+            moduleTitle.className = 'product-details-module__title ec-header-h6 details-product-purchase__place notranslate';
+            moduleContainer.appendChild(moduleTitle);
+
+            // Create module content container
+            const moduleContent = document.createElement('div');
+            moduleContent.className = 'product-details-module__content product-details-module__content--indented';
+
+            // Create the Red Sea info button
             const redSeaButton = document.createElement('button');
             redSeaButton.className = 'form-control form-control--button form-control--large form-control--primary';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
-            buttonContainer.appendChild(redSeaButton);
+            moduleContent.appendChild(redSeaButton);
+
+            // Add content to module container
+            moduleContainer.appendChild(moduleContent);
             
-            // Insert the button after the action panel
-            actionPanel.parentNode.insertBefore(buttonContainer, actionPanel.nextSibling);
+            // Insert after the action panel
+            actionPanel.parentNode.insertBefore(moduleContainer, actionPanel.nextSibling);
             console.log('✓ Red Sea info button added successfully');
             
             // Create and setup dialog
@@ -122,15 +142,16 @@
     }
 
     function addRedSeaStyles() {
-        // Add any custom styles needed for the Red Sea button and dialog
         const styles = document.createElement('style');
         styles.textContent = `
             .product-details-module.product-details__action-panel {
-                margin-top: 15px;
+                margin: 15px 0;
             }
-            .form-control--primary.red-sea-info-btn {
+            .product-details-module__content--indented {
+                padding: 0;
+            }
+            .form-control--button.form-control--large {
                 width: 100%;
-                margin-bottom: 10px;
             }
         `;
         document.head.appendChild(styles);
