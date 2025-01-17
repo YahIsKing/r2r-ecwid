@@ -54,26 +54,26 @@
         console.log('Adding Red Sea dropship info button...');
         
         try {
-            // Get the product details section
-            const productDetails = document.querySelector('.details-product-purchase__section');
+            // Get the product details action panel section
+            const actionPanel = document.querySelector('.product-details__action-panel.details-product-purchase');
             
-            if (!productDetails) {
-                console.error('Product details section not found');
+            if (!actionPanel) {
+                console.error('Product action panel not found');
                 return;
             }
 
-            // Create button container
+            // Create button container that matches Ecwid's structure
             const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'details-product-purchase__button-wrapper red-sea-info-wrapper';
+            buttonContainer.className = 'product-details-module product-details__action-panel details-product-purchase';
             
-            // Create the Red Sea info button
+            // Create the Red Sea info button with matching Ecwid styles
             const redSeaButton = document.createElement('button');
-            redSeaButton.className = 'form-control button button--large button--primary red-sea-info-btn';
+            redSeaButton.className = 'form-control form-control--button form-control--large form-control--primary';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
             buttonContainer.appendChild(redSeaButton);
             
-            // Insert the button into the product details section
-            productDetails.appendChild(buttonContainer);
+            // Insert the button after the action panel
+            actionPanel.parentNode.insertBefore(buttonContainer, actionPanel.nextSibling);
             console.log('✓ Red Sea info button added successfully');
             
             // Create and setup dialog
@@ -122,41 +122,18 @@
     }
 
     function addRedSeaStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
-            .red-sea-info-wrapper {
+        // Add any custom styles needed for the Red Sea button and dialog
+        const styles = document.createElement('style');
+        styles.textContent = `
+            .product-details-module.product-details__action-panel {
                 margin-top: 15px;
+            }
+            .form-control--primary.red-sea-info-btn {
                 width: 100%;
-            }
-            
-            .red-sea-dialog {
-                border: none;
-                border-radius: 8px;
-                box-shadow: var(--ec-modal-shadow);
-                max-width: 500px;
-                width: 90%;
-            }
-            
-            .red-sea-dialog::backdrop {
-                background-color: rgba(0, 0, 0, 0.5);
-            }
-            
-            .red-sea-dialog-content {
-                padding: 24px;
-            }
-            
-            .red-sea-dialog ul {
-                margin: 16px 0;
-                padding-left: 20px;
-            }
-            
-            .red-sea-dialog .ec-modal__footer {
-                padding-top: 16px;
-                border-top: 1px solid var(--ec-modal-border-color);
-                margin-top: 16px;
+                margin-bottom: 10px;
             }
         `;
-        document.head.appendChild(style);
+        document.head.appendChild(styles);
     }
 
     // Register handlers with EventManager
