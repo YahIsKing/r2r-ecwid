@@ -59,18 +59,22 @@
             // Add dialog content
             dialog.innerHTML = `
                 <div class="ec-modal__header">
-                    <h4 class="ec-header-h4">Shipping Information</h4>
+                    <h4 class="ec-header-h4">RED SEA DROP SHIPPING</h4>
                     <div class="ec-modal__close" onclick="this.closest('dialog').close()">×</div>
                 </div>
                 <div class="ec-modal__body">
                     <div class="shipping-info-content">
-                        <p>This item will be shipped directly from our warehouse:</p>
+                        <p>All Red Sea aquarium systems are shipped directly from the manufacturer to ensure safe delivery. Typical delivery timeframe is 1-3 weeks from order placement.</p>
+                        
+                        <p>Here's what to expect:</p>
                         <ul>
-                            <li>Free shipping on orders over $299</li>
-                            <li>Usually ships within 1-2 business days</li>
-                            <li>Tracking information will be provided</li>
+                            <li>Orders are processed by Red Sea within 1-3 business days</li>
+                            <li>You'll receive tracking information once your order ships</li>
+                            <li>The shipping company will contact you to arrange a convenient delivery time</li>
+                            <li>Please note: Due to direct shipping arrangements, order modifications may incur restocking fees</li>
                         </ul>
-                        <p>For any shipping questions, please contact us.</p>
+                        
+                        <p style="margin-top: 15px;">Note: Shipping available to continental US states only.</p>
                     </div>
                 </div>
                 <div class="ec-modal__footer">
@@ -93,12 +97,13 @@
         const styles = document.createElement('style');
         styles.textContent = `
             .shipping-info-dialog {
-                border: none;
-                border-radius: 8px;
-                box-shadow: var(--ec-modal-shadow);
-                max-width: 500px;
-                width: 90%;
-                padding: 0;
+                border: none !important;
+                border-radius: 8px !important;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+                max-width: 800px !important;
+                width: 90% !important;
+                padding: 0 !important;
+                background: white !important;
             }
             
             .shipping-info-dialog::backdrop {
@@ -106,36 +111,72 @@
             }
             
             .shipping-info-dialog .ec-modal__header {
-                padding: 20px 24px;
-                border-bottom: 1px solid var(--ec-modal-border-color);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+                padding: 20px 30px !important;
+                border-bottom: 1px solid #eee !important;
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+            }
+            
+            .shipping-info-dialog .ec-modal__header h4 {
+                margin: 0 !important;
+                color: #1e3c72 !important;
+                font-size: 24px !important;
+                font-weight: 600 !important;
             }
             
             .shipping-info-dialog .ec-modal__close {
                 cursor: pointer;
                 font-size: 24px;
                 line-height: 1;
+                color: #666;
             }
             
             .shipping-info-dialog .ec-modal__body {
-                padding: 24px;
+                padding: 30px !important;
+            }
+            
+            .shipping-info-dialog .shipping-info-content {
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+                color: #333 !important;
+            }
+            
+            .shipping-info-dialog .shipping-info-content p {
+                margin: 0 0 15px 0 !important;
+            }
+            
+            .shipping-info-dialog .shipping-info-content ul {
+                margin: 15px 0 !important;
+                padding-left: 25px !important;
+            }
+            
+            .shipping-info-dialog .shipping-info-content ul li {
+                margin-bottom: 10px !important;
             }
             
             .shipping-info-dialog .ec-modal__footer {
-                padding: 16px 24px;
-                border-top: 1px solid var(--ec-modal-border-color);
-                text-align: right;
-            }
-            
-            .shipping-info-content ul {
-                margin: 16px 0;
-                padding-left: 20px;
+                padding: 20px 30px !important;
+                border-top: 1px solid #eee !important;
+                text-align: right !important;
             }
             
             .shipping-info-button {
                 cursor: pointer;
+                background-color: #E41E31 !important;
+                color: white !important;
+                border: none !important;
+                padding: 8px 16px !important;
+                border-radius: 4px !important;
+                font-weight: 500 !important;
+                text-decoration: none !important;
+                display: inline-block !important;
+                line-height: 1.5 !important;
+                transition: background-color 0.2s ease !important;
+            }
+
+            .shipping-info-button:hover {
+                background-color: #C41929 !important;
             }
         `;
         document.head.appendChild(styles);
