@@ -8,19 +8,29 @@ Ecwid.OnAPILoaded.add(function() {
             
             // Wait for the breadcrumbs to be loaded
             const checkExist = setInterval(function() {
-                // Check the breadcrumb path
-                const breadcrumbText = document.body.textContent;
-                console.log('Checking for Red Sea Products in:', breadcrumbText.substring(0, 200) + '...');
+                // Look for breadcrumb elements
+                const breadcrumbs = document.querySelectorAll('.breadcrumbs__element');
+                if (breadcrumbs.length > 0) {
+                    // Convert breadcrumbs to an array of text
+                    const breadcrumbPath = Array.from(breadcrumbs)
+                        .map(el => el.textContent.trim())
+                        .join(' / ');
+                    
+                    console.log('Breadcrumb path:', breadcrumbPath);
 
-                // Look for "Red Sea Products" in the breadcrumb text
-                const isRedSeaProduct = breadcrumbText.includes('Red Sea Products');
-                
-                if (isRedSeaProduct) {
-                    clearInterval(checkExist);
-                    console.log('✓ Red Sea product detected in breadcrumb path');
-                    addRedSeaDropshipInfo();
+                    // Check if this is a Red Sea product by looking for "Red Sea Products" in the breadcrumbs
+                    const isRedSeaProduct = breadcrumbPath.includes('Red Sea Products');
+                    
+                    if (isRedSeaProduct) {
+                        clearInterval(checkExist);
+                        console.log('✓ Red Sea product detected in breadcrumb path');
+                        addRedSeaDropshipInfo();
+                    } else {
+                        console.log('✗ Not a Red Sea product');
+                        clearInterval(checkExist);
+                    }
                 }
-            }, 500); // Increased interval to ensure page loads
+            }, 500);
         }
     });
 });
