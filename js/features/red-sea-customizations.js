@@ -27,21 +27,20 @@ Ecwid.OnAPILoaded.add(function() {
 
 function addRedSeaDropshipInfo() {
     console.log('Attempting to add Red Sea dropship info button...');
-    // Wait for the "Order from warehouse" button to be present
+    // Wait for the "Save for later" section to be present
     const checkExist = setInterval(function() {
-        // Try multiple possible selectors for the order button
-        const orderButton = document.querySelector('.details-product-purchase__button');
-        console.log('Looking for order button...', orderButton ? 'Found' : 'Not found');
+        const saveForLaterTitle = document.querySelector('.favorite-product__title');
+        console.log('Looking for save for later section...', saveForLaterTitle ? 'Found' : 'Not found');
 
-        if (orderButton) {
+        if (saveForLaterTitle) {
             clearInterval(checkExist);
-            console.log('Found order button, adding Red Sea info button');
+            console.log('Found save for later section, adding Red Sea info button');
             
             // Create and insert the Red Sea info button
             const redSeaButton = document.createElement('button');
             redSeaButton.className = 'details-product-purchase__button red-sea-info-btn';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
-            redSeaButton.style.marginTop = '10px';
+            redSeaButton.style.marginBottom = '20px'; // Add space before the "Save for later" section
             redSeaButton.style.width = '100%';
             redSeaButton.style.padding = '13px 0';
             redSeaButton.style.backgroundColor = '#2196F3';
@@ -49,9 +48,13 @@ function addRedSeaDropshipInfo() {
             redSeaButton.style.border = 'none';
             redSeaButton.style.borderRadius = '4px';
             redSeaButton.style.cursor = 'pointer';
+            redSeaButton.style.display = 'block'; // Ensure it's a block element
             
-            // Insert the button after the order button
-            orderButton.parentNode.insertBefore(redSeaButton, orderButton.nextSibling);
+            // Get the parent container of the "Save for later" title
+            const container = saveForLaterTitle.closest('.product-details-module__title').parentElement;
+            
+            // Insert the button before the "Save for later" section
+            container.insertBefore(redSeaButton, saveForLaterTitle.closest('.product-details-module__title'));
             console.log('Red Sea info button added successfully');
             
             // Create the dialog
