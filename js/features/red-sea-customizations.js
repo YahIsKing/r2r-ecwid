@@ -1,6 +1,7 @@
 // Red Sea product customizations
 (function() {
-    let buttonAdded = false; // Flag to prevent multiple button additions
+    let buttonAdded = false;
+    let currentProductId = null;
 
     // Handler for product pages
     function handleProductPage(page) {
@@ -13,6 +14,12 @@
                 return;
             }
 
+            // Reset button state if we're on a different product
+            if (currentProductId !== page.productId) {
+                buttonAdded = false;
+                currentProductId = page.productId;
+            }
+
             // Get the product name from the page data
             const productName = page.name || '';
             console.log('Checking product:', productName);
@@ -22,19 +29,24 @@
                 console.log('✓ Red Sea product detected');
                 const product = { id: page.productId, name: productName };
                 
-                // Set up a one-time listener for the page load
-                if (!buttonAdded) {
-                    buttonAdded = true;
-                    Ecwid.OnPageLoaded.add(function(loadedPage) {
-                        if (loadedPage.type === 'PRODUCT' && loadedPage.productId === product.id) {
-                            console.log('Product page fully loaded, adding Red Sea info...');
-                            addRedSeaDropshipInfo(product);
-                        }
-                    });
-                    
-                    // Refresh the page to ensure proper loading
-                    Ecwid.refreshPage();
-                }
+                // Add handlers for page state changes
+                Ecwid.OnPageLoaded.add(function(loadedPage) {
+                    if (loadedPage.type === 'PRODUCT' && loadedPage.productId === product.id) {
+                        // Small delay to ensure DOM is fully rendered
+                        setTimeout(() => {
+                            if (!buttonAdded) {
+                                addRedSeaDropshipInfo(product);
+                            }
+                        }, 500);
+                    }
+                });
+
+                // Also handle product option changes
+                Ecwid.OnSetProduct.add(function(product) {
+                    if (!buttonAdded) {
+                        addRedSeaDropshipInfo({ id: product.id, name: product.name });
+                    }
+                });
             } else {
                 console.log('✗ Not a Red Sea product');
             }
@@ -70,14 +82,16 @@
                 return;
             }
 
+            // Check if button already exists
+            if (sidebar.querySelector('.red-sea-info-button')) {
+                console.log('Red Sea info button already exists');
+                buttonAdded = true;
+                return;
+            }
+
             // Create button module container
             const moduleContainer = document.createElement('div');
             moduleContainer.className = 'product-details-module product-details__action-panel details-product-purchase';
-
-            // Create module title (optional header)
-            const moduleTitle = document.createElement('div');
-            moduleTitle.className = 'product-details-module__title ec-header-h6 details-product-purchase__place notranslate';
-            moduleContainer.appendChild(moduleTitle);
 
             // Create module content container
             const moduleContent = document.createElement('div');
@@ -85,7 +99,7 @@
 
             // Create the Red Sea info button
             const redSeaButton = document.createElement('button');
-            redSeaButton.className = 'form-control form-control--button form-control--large form-control--primary';
+            redSeaButton.className = 'form-control form-control--button form-control--large form-control--primary red-sea-info-button';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
             moduleContent.appendChild(redSeaButton);
 
@@ -95,6 +109,7 @@
             // Insert after the action panel
             actionPanel.parentNode.insertBefore(moduleContainer, actionPanel.nextSibling);
             console.log('✓ Red Sea info button added successfully');
+            buttonAdded = true;
             
             // Create and setup dialog
             setupRedSeaDialog(redSeaButton, product);
