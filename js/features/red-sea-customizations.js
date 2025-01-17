@@ -9,19 +9,16 @@ Ecwid.OnAPILoaded.add(function() {
             // Wait for the breadcrumbs to be loaded
             const checkExist = setInterval(function() {
                 // Check the breadcrumb path
-                const breadcrumbPath = window.location.pathname;
-                console.log('Current path:', breadcrumbPath);
+                const breadcrumbText = document.body.textContent;
+                console.log('Checking for Red Sea Products in:', breadcrumbText.substring(0, 200) + '...');
 
                 // Look for "Red Sea Products" in the breadcrumb text
-                const breadcrumbText = document.body.textContent;
                 const isRedSeaProduct = breadcrumbText.includes('Red Sea Products');
                 
                 if (isRedSeaProduct) {
                     clearInterval(checkExist);
                     console.log('✓ Red Sea product detected in breadcrumb path');
                     addRedSeaDropshipInfo();
-                } else {
-                    console.log('✗ Not a Red Sea product path');
                 }
             }, 500); // Increased interval to ensure page loads
         }
@@ -29,15 +26,20 @@ Ecwid.OnAPILoaded.add(function() {
 });
 
 function addRedSeaDropshipInfo() {
+    console.log('Attempting to add Red Sea dropship info button...');
     // Wait for the "Order from warehouse" button to be present
     const checkExist = setInterval(function() {
-        const orderButton = document.querySelector('button.order-from-warehouse');
+        // Try multiple possible selectors for the order button
+        const orderButton = document.querySelector('.details-product-purchase__button');
+        console.log('Looking for order button...', orderButton ? 'Found' : 'Not found');
+
         if (orderButton) {
             clearInterval(checkExist);
+            console.log('Found order button, adding Red Sea info button');
             
             // Create and insert the Red Sea info button
             const redSeaButton = document.createElement('button');
-            redSeaButton.className = 'red-sea-info-btn';
+            redSeaButton.className = 'details-product-purchase__button red-sea-info-btn';
             redSeaButton.innerHTML = 'Red Sea Shipping Information';
             redSeaButton.style.marginTop = '10px';
             redSeaButton.style.width = '100%';
@@ -50,6 +52,7 @@ function addRedSeaDropshipInfo() {
             
             // Insert the button after the order button
             orderButton.parentNode.insertBefore(redSeaButton, orderButton.nextSibling);
+            console.log('Red Sea info button added successfully');
             
             // Create the dialog
             const dialog = document.createElement('dialog');
