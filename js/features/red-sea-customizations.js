@@ -77,9 +77,6 @@
                         <p style="margin-top: 15px;">Note: Shipping available to continental US states only.</p>
                     </div>
                 </div>
-                <div class="ec-modal__footer">
-                    <button class="form-control form-control--button form-control--small" onclick="this.closest('dialog').close()">Close</button>
-                </div>
             `;
             
             document.body.appendChild(dialog);
@@ -98,16 +95,13 @@
 
         // Add close button handler with animation
         const closeBtn = dialog.querySelector('.ec-modal__close');
-        const closeButton = dialog.querySelector('.ec-modal__footer button');
         
-        [closeBtn, closeButton].forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                dialog.setAttribute('closing', '');
-                setTimeout(() => {
-                    dialog.close();
-                }, 200); // Match animation duration
-            });
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            dialog.setAttribute('closing', '');
+            setTimeout(() => {
+                dialog.close();
+            }, 200); // Match animation duration
         });
 
         // Close on backdrop click
@@ -215,15 +209,16 @@
             .shipping-info-dialog .ec-modal__header h4 {
                 margin: 0 !important;
                 color: #1e3c72 !important;
-                font-size: 24px !important;
+                font-size: 28px !important;
                 font-weight: 600 !important;
             }
             
             .shipping-info-dialog .ec-modal__close {
                 cursor: pointer;
-                font-size: 24px;
+                font-size: 28px;
                 line-height: 1;
                 color: #666;
+                padding: 10px;
             }
             
             .shipping-info-dialog .ec-modal__body {
@@ -231,28 +226,23 @@
             }
             
             .shipping-info-dialog .shipping-info-content {
-                font-size: 16px !important;
+                font-size: 18px !important;
                 line-height: 1.6 !important;
                 color: #333 !important;
             }
             
             .shipping-info-dialog .shipping-info-content p {
-                margin: 0 0 15px 0 !important;
+                margin: 0 0 20px 0 !important;
             }
             
             .shipping-info-dialog .shipping-info-content ul {
-                margin: 15px 0 !important;
+                margin: 20px 0 !important;
                 padding-left: 25px !important;
             }
             
             .shipping-info-dialog .shipping-info-content ul li {
-                margin-bottom: 10px !important;
-            }
-            
-            .shipping-info-dialog .ec-modal__footer {
-                padding: 20px 30px !important;
-                border-top: 1px solid #eee !important;
-                text-align: right !important;
+                margin-bottom: 15px !important;
+                line-height: 1.5 !important;
             }
             
             .shipping-info-button {
