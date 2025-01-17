@@ -15,13 +15,10 @@ Ecwid.OnAPILoaded.add(function() {
 Ecwid.OnAPILoaded.add(function() {
     Ecwid.OnPageLoaded.add(function(page) {
         if (page.type == "CATEGORY" && page.categoryId == 0) { // categoryId 0 is the home page
-            // Use a small delay to ensure elements are loaded
-            setTimeout(() => {
-                const soldOutLabels = document.querySelectorAll('.ins-tile__product-label--outofstock');
-                soldOutLabels.forEach(label => {
-                    label.style.display = 'none';
-                });
-            }, 10);
+            const soldOutLabels = document.querySelectorAll('.ins-tile__product-label--outofstock');
+            soldOutLabels.forEach(label => {
+                label.style.display = 'none';
+            });
         }
     });
 });
