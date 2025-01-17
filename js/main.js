@@ -21,7 +21,7 @@ Ecwid.OnAPILoaded.add(function() {
                 soldOutLabels.forEach(label => {
                     label.style.display = 'none';
                 });
-            }, 500);
+            }, 10);
         }
     });
 });
