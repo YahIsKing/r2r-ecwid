@@ -42,19 +42,27 @@
         
         // Wait for cart total element to be available
         const waitForCartTotal = setInterval(() => {
-            const cartTotalElement = document.querySelector('.ec-cart-summary__total') ||
-                                   document.querySelector('.ec-cart-summary__cell.ec-cart-summary__price');
+            // Try different possible selectors for the total
+            const cartTotalElement = document.querySelector('.ec-cart__total-value') || 
+                                   document.querySelector('.TOTAL') ||
+                                   document.querySelector('.ec-cart-summary__total');
             
             // Also look for the cart summary container
-            const cartSummaryContainer = document.querySelector('.ec-cart__summary_body') ||
-                                       document.querySelector('.ec-cart-summary__body');
+            const cartSummaryContainer = document.querySelector('.ec-cart__summary') ||
+                                       document.querySelector('.ec-cart__summary_body');
             
             if (cartTotalElement) {
                 clearInterval(waitForCartTotal);
                 
-                // Get cart total amount
-                const totalAmount = parseFloat(cartTotalElement.textContent.replace(/[^0-9.-]+/g, "")) * 100;
-                log('Cart total amount:', totalAmount);
+                // Get cart total amount - remove currency symbol and convert to cents
+                let totalText = cartTotalElement.textContent.trim();
+                log('Raw total text:', totalText);
+                
+                // Remove currency symbol and any commas
+                totalText = totalText.replace(/[$,]/g, '');
+                const totalAmount = Math.round(parseFloat(totalText) * 100); // Convert to cents and round
+                
+                log('Parsed total amount in cents:', totalAmount);
 
                 // Create Affirm promotional element
                 const affirmPromo = document.createElement('div');
@@ -76,6 +84,7 @@
                     <style>
                         .affirm-cart-promo {
                             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                            margin-top: 10px;
                         }
                         .affirm-modal-trigger {
                             color: #2962FF;
@@ -85,14 +94,15 @@
                     </style>
                 `;
 
-                // Insert Affirm promo after cart total
+                // Try to insert after the total
                 if (cartSummaryContainer) {
                     // Remove any existing Affirm promos to prevent duplicates
-                    const existingPromo = cartSummaryContainer.querySelector('.affirm-cart-promo');
+                    const existingPromo = document.querySelector('.affirm-cart-promo');
                     if (existingPromo) {
                         existingPromo.remove();
                     }
                     
+                    // Try to insert after the total or at the end of the summary
                     cartSummaryContainer.appendChild(affirmPromo);
                     log('Affirm promo added to cart');
                     
