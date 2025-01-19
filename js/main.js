@@ -10,7 +10,8 @@ const coreModules = [
 const featureModules = [
     'features/product-customizations.js',
     'features/category-customizations.js',
-    'features/red-sea-customizations.js'
+    'features/red-sea-customizations.js',
+    'modules/affirm-integration.js'
 ];
 
 // Load script helper function
