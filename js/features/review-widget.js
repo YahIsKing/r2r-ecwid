@@ -1,12 +1,18 @@
 // Review Widget Feature
+console.log('Review Widget module loaded');
+
 export function initReviewWidget() {
+    console.log('Review Widget initialized');
     // We'll initialize this when the page load event fires
     // The actual injection will be handled by the event manager
 }
 
 export function injectReviewWidget(pageType) {
+    console.log(`Attempting to inject review widget. Page type: ${pageType}, Path: ${window.location.pathname}`);
+    
     // Only run on home page and SITE type
     if (window.location.pathname !== '/' || pageType !== 'SITE') {
+        console.log('Not injecting review widget - wrong page type or path');
         return;
     }
 

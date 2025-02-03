@@ -54,11 +54,15 @@ Ecwid.OnAPILoaded.add(async function() {
         
         // Initialize review widget through event manager
         if (typeof initReviewWidget === 'function' && typeof injectReviewWidget === 'function') {
+            console.log('Found review widget functions, initializing...');
             initReviewWidget();
             // Add page load handler for review widget
             EventManager.addHandler('page', (page) => {
+                console.log('Page handler triggered for review widget');
                 injectReviewWidget(page.type);
             });
+        } else {
+            console.warn('Review widget functions not found');
         }
         
         console.log('All modules loaded successfully');
