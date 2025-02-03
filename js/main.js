@@ -52,9 +52,13 @@ Ecwid.OnAPILoaded.add(async function() {
             await loadScript(module);
         }
         
-        // Initialize review widget
-        if (typeof initReviewWidget === 'function') {
+        // Initialize review widget through event manager
+        if (typeof initReviewWidget === 'function' && typeof injectReviewWidget === 'function') {
             initReviewWidget();
+            // Add page load handler for review widget
+            EventManager.addHandler('page', (page) => {
+                injectReviewWidget(page.type);
+            });
         }
         
         console.log('All modules loaded successfully');

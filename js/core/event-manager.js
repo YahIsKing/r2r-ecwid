@@ -4,7 +4,8 @@ const EventManager = {
         product: [],
         category: [],
         cart: [],
-        productOptions: []
+        productOptions: [],
+        page: []  // Add page handler type
     },
 
     // Initialize all event listeners
@@ -47,6 +48,9 @@ const EventManager = {
 
     // Handle page load events and route to appropriate handlers
     handlePageLoad(page) {
+        this.notifyHandlers('page', page);
+        
+        // Route to specific handlers based on page type
         switch (page.type) {
             case 'PRODUCT':
                 this.notifyHandlers('product', page);

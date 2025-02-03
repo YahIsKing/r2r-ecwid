@@ -1,12 +1,17 @@
 // Review Widget Feature
 export function initReviewWidget() {
-    // Only run on home page
-    if (window.location.pathname !== '/') {
+    // We'll initialize this when the page load event fires
+    // The actual injection will be handled by the event manager
+}
+
+export function injectReviewWidget(pageType) {
+    // Only run on home page and SITE type
+    if (window.location.pathname !== '/' || pageType !== 'SITE') {
         return;
     }
 
     // Function to inject the review widget
-    function injectReviewWidget() {
+    function injectReviewWidgetInner() {
         // Find the Delivery Info section
         const deliverySection = document.querySelector('div[aria-label="Delivery Info"]');
         if (!deliverySection) {
@@ -44,7 +49,7 @@ export function initReviewWidget() {
     const observer = new MutationObserver((mutations, obs) => {
         const deliverySection = document.querySelector('div[aria-label="Delivery Info"]');
         if (deliverySection) {
-            injectReviewWidget();
+            injectReviewWidgetInner();
             obs.disconnect(); // Stop observing once widget is injected
         }
     });
