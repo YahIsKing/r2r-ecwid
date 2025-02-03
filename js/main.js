@@ -11,7 +11,8 @@ const featureModules = [
     'features/product-customizations.js',
     'features/category-customizations.js',
     'features/red-sea-customizations.js',
-    'modules/affirm-integration.js'
+    'modules/affirm-integration.js',
+    'features/review-widget.js'
 ];
 
 // Load script helper function
@@ -49,6 +50,11 @@ Ecwid.OnAPILoaded.add(async function() {
         console.log('Loading feature modules...');
         for (const module of featureModules) {
             await loadScript(module);
+        }
+        
+        // Initialize review widget
+        if (typeof initReviewWidget === 'function') {
+            initReviewWidget();
         }
         
         console.log('All modules loaded successfully');
