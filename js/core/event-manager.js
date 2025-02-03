@@ -11,26 +11,37 @@ const EventManager = {
     init() {
         console.log('Initializing EventManager...');
         
+        if (!window.Ecwid || !window.Ecwid.OnAPILoaded) {
+            console.warn('Ecwid API not found. EventManager initialization skipped.');
+            return;
+        }
+
         Ecwid.OnAPILoaded.add(() => {
             console.log('API Loaded - Setting up event listeners...');
             
             // Set up page load handler
-            Ecwid.OnPageLoaded.add((page) => {
-                console.log(`Page loaded - Type: ${page.type}`);
-                this.handlePageLoad(page);
-            });
+            if (Ecwid.OnPageLoaded) {
+                Ecwid.OnPageLoaded.add((page) => {
+                    console.log(`Page loaded - Type: ${page.type}`);
+                    this.handlePageLoad(page);
+                });
+            }
 
             // Set up cart change handler
-            Ecwid.OnCartChanged.add((cart) => {
-                console.log('Cart changed');
-                this.notifyHandlers('cart', cart);
-            });
+            if (Ecwid.OnCartChanged) {
+                Ecwid.OnCartChanged.add((cart) => {
+                    console.log('Cart changed');
+                    this.notifyHandlers('cart', cart);
+                });
+            }
 
             // Set up product options change handler
-            Ecwid.OnProductOptionsChanged.add((product) => {
-                console.log('Product options changed');
-                this.notifyHandlers('productOptions', product);
-            });
+            if (Ecwid.OnProductOptionsChanged) {
+                Ecwid.OnProductOptionsChanged.add((product) => {
+                    console.log('Product options changed');
+                    this.notifyHandlers('productOptions', product);
+                });
+            }
         });
     },
 
